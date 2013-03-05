@@ -3,5 +3,6 @@
   :url "https://github.com/campaul/verje"
   :license {:name "The MIT License"
             :url "http://opensource.org/licenses/MIT"}
-  :dependencies [[org.clojure/clojure "1.4.0"]]
+  :dependencies [[org.clojure/clojure "1.4.0"]
+                 [aleph "0.3.0-beta7"]]
   :main verje.core)

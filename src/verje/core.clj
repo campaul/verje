@@ -6,9 +6,9 @@
 (def scr (s/get-screen :swing))
 
 (def world-state (ref {
-  1 {:renderable {:c "@" :x 10 :y 10 :z 1}
+  1 {:renderable {:c "@" :x 10 :y 10 :z 1 :color :red}
      :name-str "david"}
-  2 {:renderable {:c "." :x 9 :y 9 :z 0}}
+  2 {:renderable {:c "." :x 9 :y 9 :z 1 :color :green}}
 }))
 
 (defn find-unused-entity-id
@@ -76,7 +76,7 @@
 
 (defn draw-renderable
     [renderable]
-    (s/put-string scr (renderable :x) (renderable :y) (renderable :c)))
+    (s/put-string scr (renderable :x) (renderable :y) (renderable :c) {:fg (renderable :color)}))
 
 (defn clear-screen
   [size]

@@ -1,6 +1,10 @@
 (ns verje.core
   (:gen-class))
 
+(require '[lanterna.screen :as s])
+
+(def scr (s/get-screen :swing))
+
 (def world-state (ref {
   1 {:renderable {:c "@" :x 10 :y 10 :z 1}
      :name-str "david"}
@@ -70,7 +74,44 @@
   (dosync
     (alter world-state move-renderable entity-id dx dy dz)))
 
+(defn draw-renderable
+    [renderable]
+    (s/put-string scr (renderable :x) (renderable :y) (renderable :c)))
+
+(defn clear-screen
+  [size]
+  (dorun 
+    (for [x (range (size 0)) y (range (size 1))]
+      (s/put-string scr x y " "))))
+
+(defn draw-scene
+  [world]
+  (do
+    (clear-screen (s/get-size scr))
+    (dorun
+      (for
+        [x (keys world)]
+          (draw-renderable (:renderable (world x)))))))
+
+(defn game-loop
+  [world]
+  (do
+    (draw-scene world)
+    (s/redraw scr)
+    (let
+      [key (s/get-key-blocking scr)]
+      (cond
+        (= key :left) (recur (step-move-renderable-entity! 1 -1 0 0))
+        (= key :up) (recur (step-move-renderable-entity! 1 0 -1 0))
+        (= key :right) (recur (step-move-renderable-entity! 1 1 0 0))
+        (= key :down) (recur (step-move-renderable-entity! 1 0 1 0))
+	:else (println "Goodbye!")))))
+
 (defn -main
   "Start verje in client or server mode."
   [& args]
-  (println "Hello, World!"))
+  (do
+    (s/start scr)
+    (let [world (deref world-state)]
+        (game-loop world))
+    (s/stop scr)))
